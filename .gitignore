@@ -1,0 +1,12 @@
+*/target
+logs/
+*.log
+*.iml
+.idea
+target/
+.DS_Store
+dist/
+*/*.pyc
+logger.error
+.arcconfig
+python_env/
