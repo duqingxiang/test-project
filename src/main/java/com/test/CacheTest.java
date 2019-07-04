@@ -9,7 +9,7 @@ import com.google.common.cache.LoadingCache;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class FirstTest {
+public class CacheTest {
 
 
 
