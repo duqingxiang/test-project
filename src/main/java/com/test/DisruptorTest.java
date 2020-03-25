@@ -40,7 +40,9 @@ public class DisruptorTest {
       }
     };
 
-    disruptor.handleEventsWith(handler1, handler2);
+
+    disruptor.handleEventsWith(handler1);
+    disruptor.after(handler1).handleEventsWith(handler2);
 
     RingBuffer<DataHolder> ringBuffer = disruptor.start();
 

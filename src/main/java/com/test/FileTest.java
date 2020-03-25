@@ -14,40 +14,40 @@ public class FileTest {
 
   public static final String FILE_PATH = "/Users/duqingxiang/Documents/test1.txt";
 
-  public static int COUNTS =  1000 * 10000;
+  public static int COUNTS =  1 * 10000;
 
   public static void main(String[] args) {
 
-//    wirteFile();
+    wirteFile();
 
-    try {
-
-      int index = 10000000;
-
-      long time1 = System.currentTimeMillis();
-
-      //使用缓冲区的方法将数据读入到缓冲区中
-      BufferedReader br = new BufferedReader(
-          new InputStreamReader(new FileInputStream(FILE_PATH))); ////使用缓冲区的方法将数据读入到缓冲区中
-      String s = br.readLine(); //定义行数
-      int lines = 0;
-      while (s != null) //确定行数
-      {
-        lines++;
-        s = br.readLine();
-
-        if (index == lines) {
-          System.out.println("cost time:"+(System.currentTimeMillis()-time1)+" value:"+s);
-        }
-
-      }
-      br.close();
-
-      System.out.println(" total lines:" + lines + " cost time:" + (System.currentTimeMillis() - time1));
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
+//    try {
+//
+//      int index = 10000;
+//
+//      long time1 = System.currentTimeMillis();
+//
+//      //使用缓冲区的方法将数据读入到缓冲区中
+//      BufferedReader br = new BufferedReader(
+//          new InputStreamReader(new FileInputStream(FILE_PATH))); ////使用缓冲区的方法将数据读入到缓冲区中
+//      String s = br.readLine(); //定义行数
+//      int lines = 0;
+//      while (s != null) //确定行数
+//      {
+//        lines++;
+//        s = br.readLine();
+//
+//        if (index == lines) {
+//          System.out.println("cost time:"+(System.currentTimeMillis()-time1)+" value:"+s);
+//        }
+//
+//      }
+//      br.close();
+//
+//      System.out.println(" total lines:" + lines + " cost time:" + (System.currentTimeMillis() - time1));
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//    }
+//
 
   }
 
@@ -80,8 +80,6 @@ public class FileTest {
     } catch (IOException e) {
       e.printStackTrace();
     }
-
-
   }
 
 }
