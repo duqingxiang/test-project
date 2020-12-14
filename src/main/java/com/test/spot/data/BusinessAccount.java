@@ -19,7 +19,7 @@ public class BusinessAccount {
     private Map<String, CurrencyAccount> currencyAccountMap;
 
     public CurrencyAccount getCurrencyAccount(String currency) {
-        return currencyAccountMap.getOrDefault(currency, CurrencyAccount.buildDefault(currency));
+        return currencyAccountMap.getOrDefault(currency, CurrencyAccount.buildDefault(this.getUserId(), currency));
     }
 
     public void updateCurrencyAccount(CurrencyAccount account) {

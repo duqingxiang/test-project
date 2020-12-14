@@ -16,7 +16,7 @@ import java.util.List;
 public class SpotMatchFillAction implements ExecuteAction<SpotEvent, SpotResult, SpotStorage> {
     @Override
     public int getEventAction() {
-        return EventTypeEnums.MATCH_ORDER_CANCEL.getEventType();
+        return EventTypeEnums.MATCH_ORDER_FILL.getEventType();
     }
 
 
@@ -73,9 +73,9 @@ public class SpotMatchFillAction implements ExecuteAction<SpotEvent, SpotResult,
             // 买单处理 用户： quote frozen -  base available +
 
             // 需移除冻结的数量
-            BigDecimal removeQuoteFrozenAmount = fill.getPrice().multiply(fill.getAmount());
+            BigDecimal removeQuoteFrozenAmount = fill.getPrice().multiply(fill.getQuantity());
             // 需要增加的可用数量
-            BigDecimal addBaseAvailableAmount = fill.getAmount();
+            BigDecimal addBaseAvailableAmount = fill.getQuantity();
 
 
             BigDecimal baseAvailable = userBaseAccount.getAvailable().add(addBaseAvailableAmount);
@@ -125,9 +125,9 @@ public class SpotMatchFillAction implements ExecuteAction<SpotEvent, SpotResult,
         } else {
             // 卖单处理 用户： quote available+  base frozen-
             // 需移除冻结的数量
-            BigDecimal removeBaseFrozenAmount = fill.getAmount();
+            BigDecimal removeBaseFrozenAmount = fill.getQuantity();
             // 需要增加的可用数量
-            BigDecimal addQuoteAvailableAmount = fill.getAmount().multiply(fill.getPrice());
+            BigDecimal addQuoteAvailableAmount = fill.getQuantity().multiply(fill.getPrice());
 
             BigDecimal baseFrozen = userBaseAccount.getFrozen().subtract(removeBaseFrozenAmount);
             BigDecimal quoteAvailable = userQuoteAccount.getAvailable().add(addQuoteAvailableAmount);
@@ -145,9 +145,9 @@ public class SpotMatchFillAction implements ExecuteAction<SpotEvent, SpotResult,
             BigDecimal quoteAfterBalance = userQuoteAccount.getFrozen().add(quoteAvailable);
 
             // 用户-基础货币 可用+
-            userBaseAccount.setAvailable(baseFrozen);
+            userBaseAccount.setFrozen(baseFrozen);
             // 用户-计价货币 冻结-
-            userQuoteAccount.setFrozen(quoteAvailable);
+            userQuoteAccount.setAvailable(quoteAvailable);
 
             // 更新用户内存账户
             userStorage.updateCurrencyAccount(userBaseAccount);
@@ -231,24 +231,28 @@ public class SpotMatchFillAction implements ExecuteAction<SpotEvent, SpotResult,
         result.addLedger(AccountLedger.builder()
                 .userId(systemFeeUserStorage.getUserId())
                 .currency(feeCurrency)
-                .beforeAmount(userFeeBeforeBalance)
-                .afterAmount(userFeeAfterBalance)
+                .beforeAmount(systemFeeBeforeBalance)
+                .afterAmount(systemFeeAfterBalance)
                 .amount(fee)
                 .businessId(fill.getId())
                 .businessType(AccountLedgerTypeEnums.ORDER_MATCH_FILL_FEE.getLedgerType())
                 .build());
 
         // 更新订单
-        BigDecimal finishedAmount = order.getFinishAmount().add(fill.getAmount());
+        BigDecimal finishedQuantity = order.getFinishQuantity().add(fill.getQuantity());
         OrderStateEnums newOrderState = OrderStateEnums.PARTIAL_FILLED;
-        if (order.getAmount().compareTo(finishedAmount) == 0) {
+        if (order.getQuantity().compareTo(finishedQuantity) == 0) {
             // 如果订单数量和已经完成的数量相等，则认为是已经完成的， 需要在内存中移除订单
             newOrderState = OrderStateEnums.FILLED;
             userStorage.removeOrder(order);
         }
 
-        order.setFinishAmount(finishedAmount);
+        order.setFinishQuantity(finishedQuantity);
         order.setState(newOrderState.getState());
+
+        // 更新内存
+        storage.updateUserStage(userStorage);
+        storage.updateUserStage(systemFeeUserStorage);
 
         result.addOrder(order);
         result.addFill(fill);
@@ -261,23 +265,23 @@ public class SpotMatchFillAction implements ExecuteAction<SpotEvent, SpotResult,
         String feeCurrency = order.getFeeCurrency();
         String normalCurrency;
 
-        BigDecimal needPayFeeAmount;
+        BigDecimal needPayFeeQuantity;
         if (order.getSide() == OrderSideEnums.BUY.getSide()) {
             // 如果是买单，成交后得到的是base， 所以应缴手续费的金额就是amount
-            needPayFeeAmount = fill.getAmount();
+            needPayFeeQuantity = fill.getQuantity();
             normalCurrency = order.getBaseCurrency();
         } else {
             // 如果是卖单，成交后得到的是quote， 所以应缴手续费的金额就是amount*price
-            needPayFeeAmount = fill.getAmount().multiply(fill.getPrice());
+            needPayFeeQuantity = fill.getQuantity().multiply(fill.getPrice());
             normalCurrency = order.getQuoteCurrency();
         }
 
         // 手续费 = 应缴手续费的金额 * 手续费率， 需要区分taker,maker
         BigDecimal normalFee;
         if (fill.getRole() == MatchRoleEnums.TAKER.getRole()) {
-            normalFee = needPayFeeAmount.multiply(order.getTakerFeeRate());
+            normalFee = needPayFeeQuantity.multiply(order.getTakerFeeRate());
         } else {
-            normalFee = needPayFeeAmount.multiply(order.getMakerFeeRate());
+            normalFee = needPayFeeQuantity.multiply(order.getMakerFeeRate());
         }
 
         Boolean isNormal = true;

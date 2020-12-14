@@ -1,6 +1,7 @@
 package com.test.spot.data.result;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.test.spot.data.AccountLedger;
 import com.test.spot.data.CurrencyAccount;
 import com.test.spot.data.MatchFill;
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -25,7 +27,7 @@ public class MatchOrderFillResult {
 
     private String symbol;
 
-    private List<CurrencyAccount> accountList = Lists.newArrayList();
+    private Set<CurrencyAccount> accountList = Sets.newHashSet();
 
     private List<SpotOrder> orderList = Lists.newArrayList();
 
@@ -35,6 +37,9 @@ public class MatchOrderFillResult {
 
 
     public void addAccount(CurrencyAccount account) {
+        if (accountList.contains(account)) {
+            accountList.remove(account);
+        }
         accountList.add(account);
     }
 
@@ -51,19 +56,19 @@ public class MatchOrderFillResult {
     }
 
     public void add(MatchOrderFillResult result) {
-        if (CollectionUtils.isEmpty(result.getAccountList())) {
+        if (!CollectionUtils.isEmpty(result.getAccountList())) {
             accountList.addAll(result.getAccountList());
         }
 
-        if (CollectionUtils.isEmpty(result.getOrderList())) {
+        if (!CollectionUtils.isEmpty(result.getOrderList())) {
             orderList.addAll(result.getOrderList());
         }
 
-        if (CollectionUtils.isEmpty(result.getFillList())) {
+        if (!CollectionUtils.isEmpty(result.getFillList())) {
             fillList.addAll(result.getFillList());
         }
 
-        if (CollectionUtils.isEmpty(result.getLedgerList())) {
+        if (!CollectionUtils.isEmpty(result.getLedgerList())) {
             ledgerList.addAll(result.getLedgerList());
         }
     }

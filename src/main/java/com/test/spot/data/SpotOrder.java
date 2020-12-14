@@ -35,7 +35,7 @@ public class SpotOrder {
 
     private BigDecimal amount;
 
-    private BigDecimal finishAmount;
+    private BigDecimal finishQuantity;
 
     private Integer state;
 
@@ -62,7 +62,7 @@ public class SpotOrder {
                 .price(instruction.getPrice())
                 .quantity(instruction.getQuantity())
                 .amount(instruction.getAmount())
-                .finishAmount(BigDecimal.ZERO)
+                .finishQuantity(BigDecimal.ZERO)
                 .state(instruction.getState())
                 .baseCurrency(instruction.getBaseCurrency())
                 .quoteCurrency(instruction.getQuoteCurrency())

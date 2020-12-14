@@ -23,7 +23,7 @@ public class MatchFill {
 
     private BigDecimal price;
 
-    private BigDecimal amount;
+    private BigDecimal quantity;
 
     private Integer role;
 }

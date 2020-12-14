@@ -1,5 +1,6 @@
 package com.test.spot.data;
 
+import com.google.common.collect.Maps;
 import com.test.spot.utils.CommonUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -48,6 +49,7 @@ public class UserStorage {
         return UserStorage.builder()
                 .userId(userId)
                 .businessAccount(BusinessAccount.buildDefault(userId))
+                .orderMap(Maps.newHashMap())
                 .build();
     }
 

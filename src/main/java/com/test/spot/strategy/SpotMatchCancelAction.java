@@ -54,17 +54,17 @@ public class SpotMatchCancelAction implements ExecuteAction<SpotEvent, SpotResul
 
         String unfrozenCurrency;
         BigDecimal unfrozenAmount;
-        BigDecimal lastAmount = order.getAmount().subtract(order.getFinishAmount());
+        BigDecimal lastQuantity = order.getQuantity().subtract(order.getFinishQuantity());
         if (order.getSide() == OrderSideEnums.BUY.getSide()) {
             unfrozenCurrency = order.getQuoteCurrency();
-            unfrozenAmount = order.getPrice().multiply(lastAmount);
+            unfrozenAmount = order.getPrice().multiply(lastQuantity);
         } else {
             unfrozenCurrency = order.getBaseCurrency();
-            unfrozenAmount = lastAmount;
+            unfrozenAmount = lastQuantity;
         }
 
         Integer newOrderState = OrderStateEnums.CANCELED.getState();
-        if (order.getFinishAmount().compareTo(BigDecimal.ZERO) > 0) {
+        if (order.getFinishQuantity().compareTo(BigDecimal.ZERO) > 0) {
             newOrderState = OrderStateEnums.PARTIAL_CANCELED.getState();
         }
 

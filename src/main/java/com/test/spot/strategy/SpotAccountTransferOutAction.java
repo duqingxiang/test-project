@@ -17,7 +17,7 @@ public class SpotAccountTransferOutAction implements ExecuteAction<SpotEvent, Sp
 
     @Override
     public int getEventAction() {
-        return EventTypeEnums.ACCOUNT_TRANSFER_IN.getEventType();
+        return EventTypeEnums.ACCOUNT_TRANSFER_OUT.getEventType();
     }
 
     @Override
