@@ -1,49 +1,53 @@
 package com.test;
 
+import java.math.BigDecimal;
+
 public class FirstTest {
 
-  public static void main(String[] args) {
+    public static void main(String[] args) {
 
-    int lines = 60 * 60 * 24;
-    System.out.println("day lines: " + lines);
-    double fileSize = 962.7;
-    System.out.println("single file（100 lines）: " + fileSize + " kb");
-    double totalSize = (lines / 100) * fileSize;
-    System.out.println("day file: " + totalSize + " kb");
-    System.out.println("day file: " + (totalSize / 1024) + " mb");
+        BigDecimal amount = new BigDecimal("27");
 
-//    RunTask task = new RunTask();
-//
-//    new Thread(task).start();
-//
-//    while (true) {
-//      if (task.getState().equals(1)) {
-//        break;
-//      }
-//    }
-//
-//    System.out.println("finish");
-  }
 
-}
+        for (int i = 0; i < 100; i++) {
+            double dd = Math.pow(i, 3);
+            BigDecimal ab = new BigDecimal(dd);
+            System.out.println(Math.pow(ab.doubleValue(), 1.0 / 3));
+            //java自带幂函数，注意开方时是小数。
+            System.out.println(pow(ab.doubleValue(), 3));
+            System.out.println("========================");
+        }
 
-class RunTask implements Runnable {
 
-  volatile Integer state = 0;
 
-  @Override
-  public void run() {
-    try {
-      Thread.sleep(5000);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
     }
-    state = 1;
-    System.out.println(" 赋值完成");
-  }
 
-  public Integer getState() {
-    return state;
-  }
+
+    static double gety(double x, double m, int n)
+    //求函数值 例如  求8开立方，就是 y=x*x*x-8, m为要开立方的值即8，n表示求立方根即3，
+    {
+        double v = x;//1
+        for (int i = 1; i < n; i++)//2
+            v *= x;
+        return v - m;//3
+    }
+
+    static double getdy(double x, int n) {
+        //求函数的导数值例如： y=x*x*x-8 就是  dy=2*x*x
+        double v = n;//4
+        for (int i = 1; i < n; i++)//5
+            v *= x;//6
+        return v;//7
+    }
+
+    static double pow(double m, int n) {
+        //求对m开n次方，其中n需要大于2。
+        double x = m;
+        while (Math.abs(gety(x, m, n) / getdy(x, n)) > 0.001)//8
+            x -= gety(x, m, n) / getdy(x, n);//9
+        return x - gety(x, m, n) / getdy(x, n);//10
+    }
 }
+
+
 

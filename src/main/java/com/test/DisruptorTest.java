@@ -46,7 +46,7 @@ public class DisruptorTest {
 
     RingBuffer<DataHolder> ringBuffer = disruptor.start();
 
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 2; i++) {
       long nextSequence = ringBuffer.next();
       DataHolder dataHolder = ringBuffer.get(nextSequence);
       dataHolder.setSequence(i);
