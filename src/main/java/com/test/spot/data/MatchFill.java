@@ -26,4 +26,6 @@ public class MatchFill {
     private BigDecimal quantity;
 
     private Integer role;
+
+    private Integer orderState;
 }

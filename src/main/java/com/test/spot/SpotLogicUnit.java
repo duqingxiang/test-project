@@ -235,6 +235,7 @@ public class SpotLogicUnit {
                                         .price(new BigDecimal("1000"))
                                         .quantity(new BigDecimal("1"))
                                         .role(MatchRoleEnums.MAKER.getRole())
+                                        .orderState(OrderStateEnums.FILLED.getState())
                                         .build(),
                                 MatchFill.builder()
                                         .id(incr.addAndGet(1))
@@ -244,6 +245,7 @@ public class SpotLogicUnit {
                                         .price(new BigDecimal("1000"))
                                         .quantity(new BigDecimal("1"))
                                         .role(MatchRoleEnums.TAKER.getRole())
+                                        .orderState(OrderStateEnums.FILLED.getState())
                                         .build()))
                         .build())
                 .build());

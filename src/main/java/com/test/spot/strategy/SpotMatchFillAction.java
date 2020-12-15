@@ -240,15 +240,13 @@ public class SpotMatchFillAction implements ExecuteAction<SpotEvent, SpotResult,
 
         // 更新订单
         BigDecimal finishedQuantity = order.getFinishQuantity().add(fill.getQuantity());
-        OrderStateEnums newOrderState = OrderStateEnums.PARTIAL_FILLED;
-        if (order.getQuantity().compareTo(finishedQuantity) == 0) {
-            // 如果订单数量和已经完成的数量相等，则认为是已经完成的， 需要在内存中移除订单
-            newOrderState = OrderStateEnums.FILLED;
-            userStorage.removeOrder(order);
-        }
-
+        OrderStateEnums newOrderState = OrderStateEnums.find(fill.getOrderState());
         order.setFinishQuantity(finishedQuantity);
         order.setState(newOrderState.getState());
+
+        if (newOrderState.getFinished() == 1) {
+            userStorage.removeOrder(order);
+        }
 
         // 更新内存
         storage.updateUserStage(userStorage);
